@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/auth.middleware.js";
-import { UserSettings } from "../models/userSettings.model.js";
-import { User } from "../models/user.model.js";
+import { authMiddleware } from "../../middleware/auth.middleware.js";
+import { UserSettings } from "../../models/userSettings.model.js";
+import { User } from "../../models/user.model.js";
 import { updateProfileSchema, updateSettingsSchema } from "@nafs/shared";
-import { validateBody } from "../middleware/validate.middleware.js";
-import { AppError } from "../middleware/error.middleware.js";
-import { toPublicUser } from "../modules/auth/auth.service.js";
+import { validateBody } from "../../middleware/validate.middleware.js";
+import { AppError } from "../../middleware/error.middleware.js";
+import { toPublicUser } from "../auth/auth.service.js";
 
-const router = Router();
+const router: Router = Router();
 
 router.use(authMiddleware);
 

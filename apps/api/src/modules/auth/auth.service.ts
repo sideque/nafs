@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { env } from "../config/env.js";
-import type { AuthPayload } from "../middleware/auth.middleware.js";
+import { env } from "../../config/env.js";
+import type { AuthPayload } from "../../middleware/auth.middleware.js";
 
 export function signAccessToken(payload: AuthPayload): string {
   return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
