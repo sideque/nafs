@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import Link from 'next/link';
 
 import Sidebar from "@/components/dashboard/Sidebar";
@@ -14,7 +14,61 @@ import { ActivityTimeline } from '@/components/dashboard/ActivityTimeline';
 import { MOCK_DASHBOARD_DATA } from '@/components/mockData';
 
 export default function DashboardPage() {
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState("User");
+  const [lifeScore, setLifeScore] = useState(0);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const response = await fetch (
+          "http://localhost:4000/api/v1/auth/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
+          }
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+          setUserName(result.data.name);
+        }
+      }catch (error) {
+        console.error("Failed to fetch user: ", error);
+      }
+    }
+
+    async function fetchDashboard() {
+  try {
+    const token = localStorage.getItem("accessToken");
+
+    const response = await fetch(
+      "http://localhost:4000/api/v1/dashboard",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    if (result.success) {
+      setLifeScore(result.data.lifeScore);
+    }
+  } catch (error) {
+    console.error("Failed to fetch dashboard:", error);
+  }
+}
+
+  fetchDashboard();
+    fetchUser();
+  },[]);
 
   return (
     <div className="min-h-screen bg-[#070b14] text-slate-100 flex">
@@ -25,7 +79,7 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col lg:pl-64 min-w-0">
         {/* Navigation Header */}
         <Header 
-          userName={MOCK_DASHBOARD_DATA.user.name} 
+          userName={userName} 
           onOpenMobileMenu={() => setSidebarOpen(true)} 
         />
 
@@ -46,7 +100,7 @@ export default function DashboardPage() {
           <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
               title="Today's Progress"
-              value={`${MOCK_DASHBOARD_DATA.stats.todayProgress}%`}
+              value={`${lifeScore}%`}
               icon="🎯"
               trend="+5% vs yesterday"
               trendPositive={true}
